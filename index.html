@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#101014" />
+    <title>查个究竟｜事实核查</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="config.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <!-- 顶部栏（随页面变化） -->
+      <header class="app-header">
+        <div class="brand">
+          <div class="logo">查</div>
+          <div class="titles">
+            <div class="app-name">查个究竟</div>
+            <div class="app-sub">基于大模型 + 多源可信数据的移动端事实核查工具</div>
+          </div>
+        </div>
+        <div class="search-bar">
+          <input id="globalSearchInput" type="search" placeholder="搜索你想核查的观点/事件…" />
+          <button id="globalSearchBtn" class="btn btn-primary">搜索</button>
+        </div>
+      </header>
+
+      <!-- 主体视图容器 -->
+      <main class="view-container">
+        <!-- 观点档案馆 -->
+        <section id="view-archive" class="view active">
+          <div class="tabs">
+            <button class="tab active" data-tab="tab-reco">推荐</button>
+            <button class="tab" data-tab="tab-discover">发现</button>
+          </div>
+          <div class="chip-group" id="categoryChips"></div>
+
+          <!-- 推荐 Tab -->
+          <div id="tab-reco" class="tab-content active">
+            <div class="section-title with-action">
+              <h3>热门观点榜</h3>
+              <button id="refreshHotBtn" class="btn btn-ghost">换一换</button>
+            </div>
+            <div id="hotList" class="hot-list"></div>
+          </div>
+
+          <!-- 发现 Tab -->
+          <div id="tab-discover" class="tab-content">
+            <div id="discoverGrid" class="card-grid"></div>
+          </div>
+        </section>
+
+        <!-- 查个究竟 -->
+        <section id="view-check" class="view">
+          <div class="check-content">
+            <div class="check-prompt">
+              <h2>今天查点啥?</h2>
+            </div>
+            <div class="check-input-container">
+              <button class="upload-btn" id="uploadFileBtn" aria-label="上传文件">
+                <img src="./lianjie.svg" width="20" height="20" alt="链接" />
+              </button>
+              <input 
+                id="checkInput" 
+                type="text" 
+                placeholder="输入你要验证的观点" 
+                class="check-input"
+              />
+              <button class="send-btn" id="sendCheckBtn" aria-label="发送">
+                <img src="./sousuo.svg" width="20" height="20" alt="搜索" />
+              </button>
+            </div>
+            <input 
+              type="file" 
+              id="fileInput" 
+              accept="image/*,.pdf,.doc,.docx,.txt" 
+              style="display: none;"
+            />
+          </div>
+        </section>
+
+        <!-- 我的订阅 -->
+        <section id="view-subs" class="view">
+          <div class="section-title with-action">
+            <h3>我的订阅</h3>
+            <button id="mockUpdateBtn" class="btn btn-ghost">模拟一次更新</button>
+          </div>
+          <div id="subsList" class="subs-list"></div>
+          <div id="subsEmpty" class="empty hidden">
+            还没有订阅任何话题。去 <span class="link" data-nav="archive">观点档案馆</span> 探索一下吧～
+          </div>
+        </section>
+      </main>
+
+      <!-- 底部导航栏 -->
+      <nav class="bottom-nav">
+        <button class="nav-item active" data-nav="archive">
+          <span class="icon icon-mask" aria-hidden="true">
+            <!-- 备用内联SVG -->
+            <svg width="22" height="22" viewBox="0 0 1024 1024" fill="currentColor">
+              <path d="M198 491.77h33.41v214.81h-21.77a23.39 23.39 0 0 0 0 46.77h604.72a23.39 23.39 0 0 0 0-46.77h-21.72V491.77h33.41a23.38 23.38 0 0 0 15.21-41.15l-314-269a23.4 23.4 0 0 0-30.42 0l-314 269A23.38 23.38 0 0 0 198 491.77z m80.19 0h124.68v214.81H278.14z m296.22 0v214.81H449.64V491.77z m171.5 214.81H621.13V491.77h124.73zM512 230.22L762.79 445H261.21zM849.63 801.18H174.37a23.39 23.39 0 1 0 0 46.78h675.26a23.39 23.39 0 0 0 0-46.78z"/>
+            </svg>
+          </span>
+          <span>观点档案馆</span>
+        </button>
+        <button class="nav-item" data-nav="check">
+          <span class="icon icon-mask-hecha" aria-hidden="true">
+            <img src="./hecha.svg" width="22" height="22" alt="核查" />
+          </span>
+          <span>查个究竟</span>
+        </button>
+        <button class="nav-item" data-nav="subs">
+          <span class="icon icon-mask-dingyue" aria-hidden="true">
+            <img src="./dingyue.svg" width="22" height="22" alt="订阅" />
+          </span>
+          <span>我的订阅</span>
+        </button>
+      </nav>
+    </div>
+
+    <!-- 详情模态框 -->
+    <div id="detailModal" class="modal hidden" role="dialog" aria-modal="true">
+      <div class="modal-backdrop"></div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="modal-title" id="detailTitle">观点详情</div>
+          <button id="closeModalBtn" class="icon-btn" aria-label="关闭">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <div id="detailBody" class="modal-body"></div>
+        <div class="modal-footer">
+          <button id="modalSubscribeBtn" class="btn btn-primary">关注此话题</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html> 
